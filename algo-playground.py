@@ -5,19 +5,24 @@ import talib as ta
 
 #intialize config
 buys = [] 
+exits = [] 
 qty_stocks = 0
 entry = 0
-exits = [] 
 profit = 0
 saved_exits = []
 time_interval = 15 
 time_total = 23500
 time_start = 0
 
-transactions = []
+#models
+transactions = [] 
+
 #load data
 f = open("raw-outputs/raw-output-3-24-20.txt","r")
 lines = f.readlines()
+
+
+
 
 #create models
 arr_xs = np.arange(23500)
