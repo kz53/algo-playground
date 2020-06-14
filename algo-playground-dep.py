@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import talib as ta
 
+        
+
 #intialize config
 buys = [] 
 exits = [] 
@@ -84,50 +86,51 @@ def cross_entry(i, t=15):
         return False
 
 # main loop starts here
-for i in range(20, time_total):
-    
-    if i % 15 == 14:
-        direction_up = do_algo(i)
-        if qty_stocks ==   0:
-            if direction_up: 
-                buy(arr_ys[i], i)
+def main_loop():
+    for i in range(20, time_total):
+        
+        if i % 15 == 14:.
+            direction_up = do_algo(i)
+            if qty_stocks ==   0:
+                if direction_up: 
+                    buy(arr_ys[i], i)
+                else:
+                    #HOLD
+                    pass
+            elif qty_stocks == 1:
+                if direction_up: 
+                    #HOLD 
+                    pass
+                else:
+                    sell(arr_ys[i], i)
             else:
-                #HOLD
-                pass
-        elif qty_stocks == 1:
-            if direction_up: 
-                #HOLD 
-                pass
-            else:
-                sell(arr_ys[i], i)
+                raise Exception("You can't have something either than 1 or 0 stocks")
         else:
-            raise Exception("You can't have something either than 1 or 0 stocks")
-    else:
-        if arr_ys[i] < entry and qty_stocks != 0:
-            direction_up = cross_entry(i)
-            if not direction_up:
-                sell(arr_ys[i], i)
-        if arr_ys[i] > entry + .15: 
-            entry = arr_ys[i]
+            if arr_ys[i] < entry and qty_stocks != 0:
+                direction_up = cross_entry(i)
+                if not direction_up:
+                    sell(arr_ys[i], i)
+            if arr_ys[i] > entry + .15: 
+                entry = arr_ys[i]
 
-    # if i % time_interval == 0:
-    #     if stocks == 1:        
-    #         sell(nums[i])
-    #     entry = nums[i]
-    #     buy(nums[i]) 
-    # elif:
+        # if i % time_interval == 0:
+        #     if stocks == 1:        
+        #         sell(nums[i])
+        #     entry = nums[i]
+        #     buy(nums[i]) 
+        # elif:
 
-    # elif i % 1  == 0 and nums[i] < entry and stocks == 1:
-    #     sell(entry)
-    #     saved = False
-    #     for y in nums[i:i+45]:
-    #         if y > entry:
-    #             saved = True
-    #         if saved:
-    #             saved_exits.append(entry)
-    #     saved = False 
-        # exits.append([entry, nums[i], nums[i+1], nums[i+2],nums[i+3]])
-        #sell(nums[i])
+        # elif i % 1  == 0 and nums[i] < entry and stocks == 1:
+        #     sell(entry)
+        #     saved = False
+        #     for y in nums[i:i+45]:
+        #         if y > entry:
+        #             saved = True
+        #         if saved:
+        #             saved_exits.append(entry)
+        #     saved = False 
+            # exits.append([entry, nums[i], nums[i+1], nums[i+2],nums[i+3]])
+            #sell(nums[i])
 
 buy_xs = []
 buy_ys = []
