@@ -20,10 +20,8 @@ time_start = 0
 transactions = [] 
 
 #load data
-f = open("raw-outputs/raw-output-3-24-20.txt","r")
+f = open("raw-outputs/2020-03-24-raw-output.txt","r")
 lines = f.readlines()
-
-
 
 
 #create models

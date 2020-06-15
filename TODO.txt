@@ -1,9 +1,0 @@
-TODO
--look at style guide
--clean data, find out why some are giving huge losses
--write CRON  job to start automated data collection
--buy and sell verification
--automatic hard loss research, set number
--implement kill switch
--monitor in real time
--make list of text msgs in twilio 

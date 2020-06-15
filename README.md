@@ -1,5 +1,14 @@
-# algo-playground
+# algo-playground 
 Platform for testing algorithms
+
+Important Links
+----------------------
+Weekly Availability/Reading List **
+https://bit.ly/2MUvFSp
+
+Kanban:
+https://github.com/users/kz53/projects/1?add_cards_query=is%3Aopen 
+
 
 
 

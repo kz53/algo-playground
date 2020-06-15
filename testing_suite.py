@@ -11,7 +11,7 @@ args = parser.parse_args()
 
 
 results = []
-default_files = ["2020-03-24-raw-output.txt"]
+default_files = ["2020-03-24-raw-output.txt", "2020-03-25-raw-output.txt"]
 files = os.listdir('./raw-outputs')
 lines= []
 

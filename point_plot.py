@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from talib import LINEARREG_SLOPE
 
 #load data
-f = open("raw-outputs/raw-output-3-24-20.txt","r")
+f = open("raw-outputs/2020-03-24-raw-output.txt","r")
 
 #initialize all values 
 ys = []
