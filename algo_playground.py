@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import talib as ta
 
-class MyClass:
+class Playground:
     def __init__(self):
         #intialize config
 

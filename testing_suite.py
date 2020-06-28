@@ -3,27 +3,29 @@ import algo_playground as ap
 import argparse
 
 # grab args
+# -f (file), -a (all), none (default_files)
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help = "")
-# parser.add_argument("-o", "--Output", help = "Show Output")
 parser.add_argument('-a', '--all', action='store_true')
 args = parser.parse_args()  
 
 
+#config
+files = ["2020-03-24-raw-output.txt", "2020-03-25-raw-output.txt"]
+
+#models
 results = []
-default_files = ["2020-03-24-raw-output.txt", "2020-03-25-raw-output.txt"]
-files = os.listdir('./raw-outputs')
 lines= []
 
-m = ap.MyClass()
+m = ap.Playground()
 
 if args.all:
-    pass
+    files = os.listdir('./raw-outputs')
 elif args.file:
     files = []
     files.append(args.file)
 else:
-    files = default_files
+    pass
 
 for filename in files:
     f = open('./raw-outputs/'+filename, 'r')
@@ -40,7 +42,7 @@ for filename in files:
         counter+=1
 
     # run mainloop on file
-    print(filename[0:10])
+    # print(filename[0:10])
     m.load_data(filename)
     m.main_loop()
     transactions = m.get_transactions()
@@ -52,7 +54,7 @@ for filename in files:
     # output['transactions'] = transactions
     results.append(output)
 
-# print(str(results))
+print(str(results))
 #{
 # Date:
 # Output:
