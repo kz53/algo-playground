@@ -13,12 +13,11 @@ def abline(slope, intercept, a, b):
     # print(x_vals)
 
 #load data
-f = open("raw-outputs/2020-03-24-raw-output.txt","r") 
-
+f = open("../raw-outputs/2020-03-24-raw-output.txt","r") 
 #...initialize all values 
 list_xs = []
 list_ys = []
-list_linreg_15 = []
+values_to_plot = []
 time_total = 23000
 #...load data for entire time series
 lines = f.readlines()
@@ -26,18 +25,29 @@ for i in range(time_total):
     list_xs.append(i)
     list_ys.append(float(lines[i])) 
 
-#put function to be tested here
-list_linreg_15 = ta.LINEARREG_SLOPE(np.array(list_ys), 15)
 
-#print(ta.LINEARREG_SLOPE(np.array(ys),300)[300])
+#START ****************************************
 
-
+#function to be tested here
 #--------------------
-print(type(list_ys))
-plt.plot(list_xs, list_linreg_15)
-plt.plot(list_xs, list_linreg_15, 'g^')
+list_linreg_15 = ta.LINEARREG_SLOPE(np.array(list_ys), 15)
+#--------------------
 
 
-plt.ylabel('')
+#graph data points here
+#--------------------
+plt.plot(list_xs, list_ys)
+plt.plot(list_xs, list_ys)
+plt.plot(list_xs, values_to_plot, 'g^')
+#--------------------
+
+#print results here
+#--------------------
+#--------------------
+
+#END ****************************************
+
+
+plt.ylabel('price')
 plt.xlabel('time')
 plt.show() 

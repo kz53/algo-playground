@@ -11,7 +11,7 @@ args = parser.parse_args()
 
 
 #config
-files = ["2020-03-24-raw-output.txt", "2020-03-25-raw-output.txt"]
+files = ["2020-03-24-raw-output.txt"]
 
 #models
 results = []
