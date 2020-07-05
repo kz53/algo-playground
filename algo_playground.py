@@ -10,13 +10,17 @@ class Playground:
         #intialize config
         self.qty_stocks = 0
         self.time_interval = 15 
-        self.time_total = 23500
+        self.time_total = 22900
         self.time_start = 0
         #models
         self.entry = 0
         self.profit = 0
         self.buys = [] 
         self.exits = [] 
+        self.buy_prices = []
+        self.buy_times = []
+        self.sell_prices = []
+        self.sell_times = []
         self.saved_exits = []
         self.transactions = [] 
         self.arr_xs = np.arange(23500)
@@ -26,18 +30,22 @@ class Playground:
     def load_data(self, name):
 
         #open file
-        f = open("raw-outputs/"+name,"r")
+        f = open("secdata/"+name,"r")
         lines = f.readlines()
 
         # clear values
         self.buys = [] 
         self.exits = [] 
+        self.buy_prices = []
+        self.buy_times = []
+        self.sell_prices = []
+        self.sell_times = []
         self.qty_stocks = 0
         self.entry = 0
         self.profit = 0
         self.saved_exits = []
         self.time_interval = 15 
-        self.time_total = len(lines)
+        self.time_total = 22900
         self.time_start = 0
         
         #models
@@ -53,11 +61,16 @@ class Playground:
         self.entry = price
         self.qty_stocks += 1
         self.transactions.append((price, i, -1, -1))
+        self.buy_prices.append(price)
+        self.buy_times.append(time)
 
     def sell(self, price, i):    
         last = self.transactions[-1]
         if last[2] == -1 and last[3] == -1:
             self.transactions[-1] = (last[0], last[1], price, i) 
+            self.sell_prices.append(price)
+            self.sell_times.append(time)
+
         else: 
             raise Exception("Tried to sell something that wasn't there.")
         self.qty_stocks -= 1
@@ -111,12 +124,12 @@ class Playground:
                 else:
                     raise Exception("You can't have something either than 1 or 0 stocks")
             else:
-                if self.arr_ys[i] < self.entry -.10 and self.qty_stocks != 0:
-                    direction_up = self.cross_entry(i)
-                    if not direction_up:
-                        self.sell(self.arr_ys[i], i)
-                if self.arr_ys[i] > self.entry + .15: 
-                    self.entry = self.arr_ys[i]
+                if ta.MA(self.arr_ys[i-9:i+1],10)[-1] < self.entry  and self.qty_stocks != 0:
+                    self.sell(self.arr_ys[i], i)
+                if self.arr_ys[i] >= self.entry + .20 and self.qty_stocks != 0: 
+                    self.sell(self.arr_ys[i], i)
+        if self.qty_stocks != 0:
+            self.sell(self.arr_ys[self.time_total-1], self.time_total-1)
 
     def get_transactions(self):
         print("Num transactions: ", str(len(self.transactions))) 
@@ -124,8 +137,7 @@ class Playground:
         return self.transactions
 
     def show_plot(self):
-        plt.plot(self.arr_xs, self.arr_ys)
-        plt.plot(self.arr_xs, self.arr_ys, 'b.')
+        #
         plt.show()
 
     def get_results(self):
@@ -141,7 +153,8 @@ class Playground:
             buy_ys.append(t[0])
             sell_xs.append(t[3])
             sell_ys.append(t[2])
-
+        plt.plot(self.arr_xs, self.arr_ys)
+        plt.plot(self.arr_xs, self.arr_ys, 'b.')
         plt.plot(sell_xs, sell_ys, 'ro')
         plt.plot(buy_xs, buy_ys, 'g^') 
         print("Profit: ", str(self.profit))
@@ -150,7 +163,7 @@ class Playground:
 
 print("ok, starting\n")
 # m = MyClass()
-# m.load_data("2020-03-27-raw-output.txt")
+# m.load_data("2020-03-27-secdata.txt")
 # m.main_loop()
 # m.get_transactions()
 # m.show_results()

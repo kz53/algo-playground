@@ -20,7 +20,7 @@ lines= []
 m = ap.Playground()
 
 if args.all:
-    files = os.listdir('./raw-outputs')
+    files = os.listdir('./secdata')
 elif args.file:
     files = []
     files.append(args.file)
@@ -28,7 +28,7 @@ else:
     pass
 
 for filename in files:
-    f = open('./raw-outputs/'+filename, 'r')
+    f = open('./secdata/'+filename, 'r')
     data  = []
     counter = 0
     end_time = len(f.readlines())
@@ -55,6 +55,14 @@ for filename in files:
     results.append(output)
 
 print(str(results))
+
+trans_list = m.get_transactions()
+for item in trans_list:
+    subprofit = item[2] - item[0]
+    if subprofit < 0:
+        print(str(item) + ", " + str(subprofit))
+
+m.show_plot()
 #{
 # Date:
 # Output:

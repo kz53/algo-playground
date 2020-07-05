@@ -13,7 +13,7 @@ def abline(slope, intercept, a, b):
     # print(x_vals)
 
 #load data
-f = open("raw-outputs/2020-03-24-raw-output.txt","r") 
+f = open("secdata/2020-03-24-secdata.txt","r") 
 #...initialize all values 
 list_xs = []
 list_ys = []
