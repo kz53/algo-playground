@@ -1,10 +1,11 @@
 import os
 
-files = os.listdir('./raw-outputs/')
+files = os.listdir('./secdata/')
 
 for f in files:
-    if f[-3:] == 'csv':
+    if f[-3:] == 'txt':
         print(f)
-        f2 = 'SHOP-'+f
-        os.rename('raw-outputs/'+f, './raw-outputs/'+f2)
+        # f2 = 'MSFT-'+f
+        f2 = f.replace('raw-output', 'secdata', 1)
+        os.rename('secdata/'+f, 'secdata/'+f2)
 
