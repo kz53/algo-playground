@@ -27,6 +27,7 @@ class Playground:
         self.arr_ys = np.full(23500,-1.)
         self.data_buffer = np.full(1800,-1.)
         nn_model.init()
+
     def load_data(self, name):
 
         #open file
@@ -45,7 +46,7 @@ class Playground:
         self.profit = 0
         self.saved_exits = []
         self.time_interval = 15 
-        self.time_total = 22900
+        self.time_total = self.get_valid_len(lines)
         self.time_start = 0
         
         #models
@@ -75,6 +76,13 @@ class Playground:
             raise Exception("Tried to sell something that wasn't there.")
         self.qty_stocks -= 1
 
+    def get_valid_len(self, mylist):
+        counter = 0
+        for i in mylist:
+            if i == -1:
+                break
+            counter += 1
+        return counter 
 
     def do_algo(self, data, t=15): 
         # wrong - points = self.arr_ys[i-(t+2):i+1]
