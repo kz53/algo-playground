@@ -11,7 +11,7 @@ args = parser.parse_args()
 
 
 #config
-files = ["2020-03-24-raw-output.txt"]
+files = ["MSFT-2020-03-24-secdata.txt"]
 
 #models
 results = []

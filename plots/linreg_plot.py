@@ -18,7 +18,7 @@ def abline(slope, intercept, a, b):
 
 
 #load data
-f = open("secdata/2020-03-24-raw-output.txt","r") 
+f = open("secdata/MSFT-2020-03-24-secdata.txt","r") 
 
 #...initialize all values 
 list_xs = []

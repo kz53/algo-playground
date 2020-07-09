@@ -20,7 +20,7 @@ time_start = 0
 transactions = [] 
 
 #load data
-f = open("secdata/2020-03-24-raw-output.txt","r")
+f = open("secdata/MSFT-2020-03-24-secdata.txt","r")
 lines = f.readlines()
 
 

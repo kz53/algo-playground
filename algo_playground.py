@@ -62,14 +62,14 @@ class Playground:
         self.qty_stocks += 1
         self.transactions.append((price, i, -1, -1))
         self.buy_prices.append(price)
-        self.buy_times.append(time)
+        self.buy_times.append(i)
 
     def sell(self, price, i):    
         last = self.transactions[-1]
         if last[2] == -1 and last[3] == -1:
             self.transactions[-1] = (last[0], last[1], price, i) 
             self.sell_prices.append(price)
-            self.sell_times.append(time)
+            self.sell_times.append(i)
 
         else: 
             raise Exception("Tried to sell something that wasn't there.")
@@ -163,7 +163,7 @@ class Playground:
 
 print("ok, starting\n")
 # m = MyClass()
-# m.load_data("2020-03-27-secdata.txt")
+# m.load_data("MSFT-2020-03-27-secdata.txt")
 # m.main_loop()
 # m.get_transactions()
 # m.show_results()
