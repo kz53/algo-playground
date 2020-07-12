@@ -23,7 +23,7 @@ def get_pred(high,low,close):
     new[8]=ta.WILLR(high,low,close)[-1]
     new[9]=ta.ROC(close,timeperiod=14)[-1]*100
     new=(new/100).reshape((1,10))
-    val1=model1.predict(new)
+    val1=model1(new)
     #=model2.predict(new)
     #print(val1,val2)
 
