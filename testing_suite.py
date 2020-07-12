@@ -1,13 +1,13 @@
-import os 
+import os
 import algo_playground as ap
 import argparse
-
+import numpy as np
 # grab args
 # -f (file), -a (all), none (default_files)
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help = "")
 parser.add_argument('-a', '--all', action='store_true')
-args = parser.parse_args()  
+args = parser.parse_args()
 
 #config
 files = ["MSFT-2020-03-24-secdata.txt"]
@@ -34,7 +34,7 @@ for filename in files:
     end_time = len(f.readlines())
 
     for i in f.readlines():
-        if(float(i)!=-1):  
+        if(float(i)!=-1):
             data.append(float(i))
         else:
             end_time = counter
@@ -52,9 +52,9 @@ for filename in files:
     output['total_time'] = end_time
     output['profit'] = profit
     # output['transactions'] = transactions
-    results.append(output)
+    results.append(profit)
 
-print(str(results))
+print(np.sum(np.array(results)))
 
 # trans_list = m.get_transactions()
 # for item in trans_list:
@@ -69,8 +69,8 @@ print(str(results))
 #{
 # Date:
 # Output:
-# Length of time: 
+# Length of time:
 # Transactions: (price, i, price2, j)
 #
 #
-#}  
+#}
