@@ -17,10 +17,8 @@ folder = 'MSFT/'
 results = []
 lines= []
 
-m = ap.Playground()
-
 if args.all:
-    files = os.listdir('./secdata/'+folder)
+    files = os.listdir('../secdata/'+folder)
 elif args.file:
     files = []
     files.append(args.file)
@@ -28,28 +26,16 @@ else:
     pass
 
 for filename in files:
-    f = open('./secdata/'+folder+filename, 'r')
-    data  = []
-    counter = 0
-    end_time = len(f.readlines())
-
-    for i in f.readlines():
-        if(float(i)!=-1):  
-            data.append(float(i))
-        else:
-            end_time = counter
-            break
-        counter+=1
+    pg = ap.Playground('../secdata/'+folder+filename)
 
     # run mainloop on file
-    # print(filename[0:10])
-    m.load_data(folder+filename)
-    m.main_loop()
-    transactions = m.get_transactions()
-    profit = m.get_results()
+    print(filename[5:15])
+    pg.main_loop()
+    transactions = pg.get_transactions()
+    profit = pg.get_results()
     output = {}
     output['date'] = filename[5:15]
-    output['total_time'] = end_time
+    output['total_time'] = pg.time_total
     output['profit'] = profit
     # output['transactions'] = transactions
     results.append(output)

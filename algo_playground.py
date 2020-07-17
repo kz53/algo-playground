@@ -5,58 +5,65 @@ import talib as ta
 import nn_model
 
 class Playground:
-    def __init__(self):
-
+    def __init__(self,name):
+        #open file
+        f = open(name,"r")
+        lines = f.readlines()
         #intialize config
         self.qty_stocks = 0
         self.time_interval = 15 
-        self.time_total = 22900
-        self.time_start = 0
-        #models
-        self.entry = 0
-        self.profit = 0
-        self.buys = [] 
-        self.exits = [] 
-        self.buy_prices = []
-        self.buy_times = []
-        self.sell_prices = []
-        self.sell_times = []
-        self.saved_exits = []
-        self.transactions = [] 
-        self.arr_xs = np.arange(23500)
-        self.arr_ys = np.full(23500,-1.)
-        self.data_buffer = np.full(1800,-1.)
-        nn_model.init()
-
-    def load_data(self, name):
-
-        #open file
-        f = open("secdata/"+name,"r")
-        lines = f.readlines()
-
-        # clear values
-        self.buys = [] 
-        self.exits = [] 
-        self.buy_prices = []
-        self.buy_times = []
-        self.sell_prices = []
-        self.sell_times = []
-        self.qty_stocks = 0
-        self.entry = 0
-        self.profit = 0
-        self.saved_exits = []
-        self.time_interval = 15 
         self.time_total = self.get_valid_len(lines)
         self.time_start = 0
-        
         #models
+        self.entry = 0
+        self.profit = 0
+        self.buys = [] 
+        self.exits = [] 
+        self.buy_prices = []
+        self.buy_times = []
+        self.sell_prices = []
+        self.sell_times = []
+        self.saved_exits = []
         self.transactions = [] 
         self.arr_xs = np.arange(self.time_total)
         self.arr_ys = np.full(self.time_total,-1.)
-        self.data_buffer = np.full(1800,-1.)
+        
         #populate models
         for i in range(self.time_total):
             self.arr_ys[i] = float(lines[i])
+        
+        nn_model.init()
+
+
+    # def load_data(self, name):
+
+    #     #open file
+    #     f = open("secdata/"+name,"r")
+    #     lines = f.readlines()
+
+    #     # clear values
+    #     self.buys = [] 
+    #     self.exits = [] 
+    #     self.buy_prices = []
+    #     self.buy_times = []
+    #     self.sell_prices = []
+    #     self.sell_times = []
+    #     self.qty_stocks = 0
+    #     self.entry = 0
+    #     self.profit = 0
+    #     self.saved_exits = []
+    #     self.time_interval = 15 
+    #     self.time_total = self.get_valid_len(lines)
+    #     self.time_start = 0
+        
+    #     #models
+    #     self.transactions = [] 
+    #     self.arr_xs = np.arange(self.time_total)
+    #     self.arr_ys = np.full(self.time_total,-1.)
+    #     self.data_buffer = np.full(1800,-1.)
+    #     #populate models
+    #     for i in range(self.time_total):
+    #         self.arr_ys[i] = float(lines[i])
 
     def buy(self, price, i):
         self.entry = price
@@ -169,7 +176,6 @@ class Playground:
         print("----------------")
         return self.profit
 
-print("ok, starting\n")
 # m = MyClass()
 # m.load_data("MSFT-2020-03-27-secdata.txt")
 # m.main_loop()
