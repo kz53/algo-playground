@@ -19,7 +19,7 @@ lines= []
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help = "")
 parser.add_argument('-a', '--all', action='store_true')
-parser.add_argument('-s', '--symb',required =True)
+parser.add_argument('-s', '--symb')
 args = parser.parse_args()  
 
 
@@ -61,7 +61,7 @@ total_sum = 0
 for r in results:
     total_sum += r['profit']
 print(f"Total profit across {len(results)} days: {total_sum}")
-print(str(results))
+# print(str(results))
 
 
 # m.show_plot()
