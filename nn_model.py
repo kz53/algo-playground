@@ -7,12 +7,12 @@ def init():
     global model1
     global model2
     model1=tf.keras.models.load_model("models/model1")
-    model2=tf.keras.models.load_model("models/model2")
+    # model2=tf.keras.models.load_model("models/model2")
 
 
 def get_pred(high,low,close):
     new=np.zeros(10)
-    new[0]=ta.PLUS_DM(high,low)[-1]
+    new[0]=ta.NATR(high,low,close)[-1]
     new[1]=ta.CCI(high,low,close)[-1]
     new[2]=ta.CMO(close)[-1]
     new[3]=ta.DX(high,low,close)[-1]
