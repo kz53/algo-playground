@@ -2,34 +2,50 @@ import os
 import algo_playground as ap
 import argparse
 
-# grab args
-# -f (file), -a (all), none (default_files)
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--file", help = "")
-parser.add_argument('-a', '--all', action='store_true')
-args = parser.parse_args()  
 
-#config
-files = ["MSFT-2020-03-24-secdata.txt"]
-folder = 'MSFT/'
+
+symb = 'TSLA'
+folder = symb + '/'
+directory = '../secdata/'
+files = [f"{symb}-2020-03-24-secdata.txt"]
+excluded_files = [f'{symb}-2020-07-10-secdata.txt']
 
 #models
 results = []
 lines= []
 
+# Grab arguments
+# -f (file), -a (all), none (default_files), -s (symbol)
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", "--file", help = "")
+parser.add_argument('-a', '--all', action='store_true')
+parser.add_argument('-s', '--symb',required =True)
+args = parser.parse_args()  
+
+
+if args.symb:
+    symb = args.symb
+    folder = symb + '/'
+    directory = '../secdata/'
+    files = [f"{symb}-2020-03-24-secdata.txt"]
+    excluded_files = [f'{symb}-2020-07-10-secdata.txt']
+
+# Handle args
 if args.all:
-    files = os.listdir('../secdata/'+folder)
+    files = os.listdir(directory+folder)
+    for x in excluded_files:
+        files.remove(x)
 elif args.file:
     files = []
     files.append(args.file)
 else:
     pass
 
-for filename in files:
-    pg = ap.Playground('../secdata/'+folder+filename)
 
+for filename in files:
+    pg = ap.Playground(directory+folder+filename)
     # run mainloop on file
-    print(filename[5:15])
+    print(filename[0:15])
     pg.main_loop()
     transactions = pg.get_transactions()
     profit = pg.get_results()
@@ -40,22 +56,22 @@ for filename in files:
     # output['transactions'] = transactions
     results.append(output)
 
+# Get total return across X days
+total_sum = 0
+for r in results:
+    total_sum += r['profit']
+print(f"Total profit across {len(results)} days: {total_sum}")
 print(str(results))
-
-# trans_list = m.get_transactions()
-# for item in trans_list:
-#     subprofit = item[2] - item[0]
-#     if subprofit < 0:
-#         print(str(item) + ", " + str(subprofit))
 
 
 # m.show_plot()
 
-
+# Output format
 #{
 # Date:
 # Output:
 # Length of time: 
+# Numtransactinos: 
 # Transactions: (price, i, price2, j)
 #
 #
