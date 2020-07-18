@@ -19,10 +19,10 @@ class Playground:
         self.profit = 0
         self.buys = [] 
         self.exits = [] 
-        self.buy_prices = []
-        self.buy_times = []
-        self.sell_prices = []
-        self.sell_times = []
+        self.buy_ys = []
+        self.buy_xs = []
+        self.sell_ys = []
+        self.sell_xs = []
         self.saved_exits = []
         self.transactions = [] 
         self.arr_xs = np.arange(self.time_total)
@@ -34,53 +34,30 @@ class Playground:
         
         nn_model.init()
 
-
-    # def load_data(self, name):
-
-    #     #open file
-    #     f = open("secdata/"+name,"r")
-    #     lines = f.readlines()
-
-    #     # clear values
-    #     self.buys = [] 
-    #     self.exits = [] 
-    #     self.buy_prices = []
-    #     self.buy_times = []
-    #     self.sell_prices = []
-    #     self.sell_times = []
-    #     self.qty_stocks = 0
-    #     self.entry = 0
-    #     self.profit = 0
-    #     self.saved_exits = []
-    #     self.time_interval = 15 
-    #     self.time_total = self.get_valid_len(lines)
-    #     self.time_start = 0
-        
-    #     #models
-    #     self.transactions = [] 
-    #     self.arr_xs = np.arange(self.time_total)
-    #     self.arr_ys = np.full(self.time_total,-1.)
-    #     self.data_buffer = np.full(1800,-1.)
-    #     #populate models
-    #     for i in range(self.time_total):
-    #         self.arr_ys[i] = float(lines[i])
-
     def buy(self, price, i):
         self.entry = price
         self.qty_stocks += 1
         self.transactions.append((price, i, -1, -1))
-        self.buy_prices.append(price)
-        self.buy_times.append(i)
+        if len(self.buy_xs) == len(self.sell_ys):
+            self.buy_ys.append(price)
+            self.buy_xs.append(i)
+        else:
+            raise Exception("Tried to buy when still have an open position.")
+    
 
     def sell(self, price, i):    
         last = self.transactions[-1]
         if last[2] == -1 and last[3] == -1:
             self.transactions[-1] = (last[0], last[1], price, i) 
-            self.sell_prices.append(price)
-            self.sell_times.append(i)
-
         else: 
             raise Exception("Tried to sell something that wasn't there.")
+
+        if len(self.sell_xs) + 1 == len(self.buy_ys):
+            self.sell_ys.append(price)
+            self.sell_xs.append(i)
+        else:
+            raise Exception("Tried to buy when still have an open position.")
+
         self.qty_stocks -= 1
 
     def get_valid_len(self, mylist):
@@ -155,6 +132,7 @@ class Playground:
         #
         plt.show()
 
+    #return 
     def get_results(self):
         buy_xs = []
         buy_ys = []
@@ -175,9 +153,3 @@ class Playground:
         print("Profit: ", str(self.profit))
         print("----------------")
         return self.profit
-
-# m = MyClass()
-# m.load_data("MSFT-2020-03-27-secdata.txt")
-# m.main_loop()
-# m.get_transactions()
-# m.show_results()
