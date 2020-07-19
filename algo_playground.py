@@ -6,8 +6,9 @@ import nn_model
 
 class Playground:
     def __init__(self,name):
+        self.filename = name
         #open file
-        f = open(name,"r")
+        f = open(self.filename,"r")
         lines = f.readlines()
         #intialize config
         self.qty_stocks = 0
@@ -57,7 +58,7 @@ class Playground:
             self.sell_xs.append(i)
         else:
             raise Exception("Tried to buy when still have an open position.")
-
+        self.profit += self.sell_ys[-1] - self.buy_ys[-1]
         self.qty_stocks -= 1
 
     def get_valid_len(self, mylist):
@@ -96,7 +97,7 @@ class Playground:
         else:
             return False
 
-    # main loop starts here
+    # Main loop starts here
     def main_loop(self):
         for i in range(900, self.time_total):
             if i % 60 == 0:
@@ -116,6 +117,7 @@ class Playground:
                 else:
                     raise Exception("You can't have something either than 1 or 0 stocks")
             else:
+
                 if ta.MA(self.arr_ys[i-9:i+1],10)[-1] < self.entry  and self.qty_stocks != 0:
                     self.sell(self.arr_ys[i], i)
                 if self.arr_ys[i] >= self.entry + .20 and self.qty_stocks != 0: 
@@ -123,33 +125,38 @@ class Playground:
         if self.qty_stocks != 0:
             self.sell(self.arr_ys[self.time_total-1], self.time_total-1)
 
+    # Get a List of tuples that have complete transaction data 
+    # [(buy price, i , sell price, j)]
     def get_transactions(self):
         print("Num transactions: ", str(len(self.transactions))) 
         # print("Transactions: ", str(self.transactions)) 
         return self.transactions
 
     def show_plot(self):
-        #
+        for t in self.transactions: 
+            gain = t[2] - t[0]
+            # self.profit += gain
+            self.buy_xs.append(t[1])
+            self.buy_ys.append(t[0])
+            self.sell_xs.append(t[3])
+            self.sell_ys.append(t[2])
+        plt.plot(self.arr_xs, self.arr_ys)
+        plt.plot(self.arr_xs, self.arr_ys, 'b.')
+        plt.plot(self.sell_xs, self.sell_ys, 'ro')
+        plt.plot(self.buy_xs, self.buy_ys, 'g^') 
         plt.show()
 
     #return 
     def get_results(self):
-        buy_xs = []
-        buy_ys = []
-        sell_xs = []
-        sell_ys = []
+        #tODO: return result dict here instead of testing suite
+        parts = self.filename.split('-')
+        output = {}
+        output['symb'] = parts[0]
+        output['date'] = parts[1]+'-'+parts[2]+'-'+parts[3]
+        output['total_time'] = self.time_total
+        output['profit'] = self.profit 
+        output['transactions'] = self.transactions
+        output['num_transactions'] = len(self.transactions)
+        return output 
 
-        for t in self.transactions: 
-            gain = t[2] - t[0]
-            self.profit += gain
-            buy_xs.append(t[1])
-            buy_ys.append(t[0])
-            sell_xs.append(t[3])
-            sell_ys.append(t[2])
-        plt.plot(self.arr_xs, self.arr_ys)
-        plt.plot(self.arr_xs, self.arr_ys, 'b.')
-        plt.plot(sell_xs, sell_ys, 'ro')
-        plt.plot(buy_xs, buy_ys, 'g^') 
-        print("Profit: ", str(self.profit))
-        print("----------------")
         return self.profit
