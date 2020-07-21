@@ -99,10 +99,14 @@ class Playground:
 
     # Main loop starts here
     def main_loop(self):
+        # Start at 15 minutes
         for i in range(900, self.time_total):
+            # Every 60 seconds
             if i % 60 == 0:
                 direction_up = self.do_algo(self.arr_ys[i-900:i])
+                # If no stocks 
                 if self.qty_stocks == 0:
+                    # If direction is going up
                     if direction_up: 
                         self.buy(self.arr_ys[i], i)
                     else:
@@ -114,13 +118,16 @@ class Playground:
                         pass
                     else:
                         self.sell(self.arr_ys[i], i)
+                # Error with logging buys/sells
                 else:
                     raise Exception("You can't have something either than 1 or 0 stocks")
+            # Every second
             else:
-
-                if ta.MA(self.arr_ys[i-9:i+1],10)[-1] < self.entry  and self.qty_stocks != 0:
+                # If x second ma is less than entry
+                if ta.MA(self.arr_ys[i-9:i+1],30)[-1] < self.entry and self.qty_stocks != 0:
                     self.sell(self.arr_ys[i], i)
-                if self.arr_ys[i] >= self.entry + .20 and self.qty_stocks != 0: 
+                # If price rises by x amount
+                if self.arr_ys[i] >= self.entry + 1.20 and self.qty_stocks != 0: 
                     self.sell(self.arr_ys[i], i)
         if self.qty_stocks != 0:
             self.sell(self.arr_ys[self.time_total-1], self.time_total-1)

@@ -8,7 +8,7 @@ symb = 'SHOP'
 folder = symb + '/'
 directory = '../secdata/'
 files = [f"{symb}-2020-07-13-secdata.txt"]
-excluded_files = [f'{symb}-2020-07-10-secdata.txt']
+excluded_files = [f'{symb}-2020-07-10-secdata.txt',f'{symb}-2020-07-16-secdata.txt']
 
 #models
 results = []
@@ -19,7 +19,7 @@ lines= [] # --delete
 parser = argparse.ArgumentParser()
 parser.add_argument("-f", "--file", help = "")
 parser.add_argument('-a', '--all', action='store_true')
-parser.add_argument('-s', '--symb', action='store_true')
+parser.add_argument('-s', '--symb' )
 parser.add_argument('-p', '--plot', action='store_true' )
 parser.add_argument('-d', '--date' )
 
@@ -42,11 +42,10 @@ elif args.file:
 else:
     pass
 
-
+# Loop thorugh files
 for filename in files:
     pg = ap.Playground(directory+folder+filename)
-    # run mainloop on file
-
+    # Run mainloop on file and get output
     pg.main_loop()
     transactions = pg.get_transactions()
     output = pg.get_results()
@@ -54,17 +53,20 @@ for filename in files:
     results.append(output)
     print(output['date'])
     print("Num Transactions: ", str(output['num_transactions']))
-
-    #Get % of transactions that win
+    #----------------
+    # Get % of transactions that win
     num_win = 0
     for t in output['transactions']: 
         if t[2]-t[0] > 0:
             num_win += 1
-    print("Pct win: " + str(num_win/output['num_transactions']))
-    
+    if output['num_transactions'] > 0:
+        print("Pct win: " + str(num_win/output['num_transactions']))
+    else:
+        print(0)
+    #----------------
     print("Profit: ", str(output['profit']))
     print("----------------")
-    # print(output)
+
     if args.plot :
         pg.show_plot()
 

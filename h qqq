@@ -1,0 +1,39 @@
+* [33m00967f3[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;32mkel[m[33m)[m added % win and show plot flags
+* [33m7107296[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m minor print fix
+* [33m675cde2[m added testing any stock functionality
+* [33ma3ddc09[m added arthur pretty good model
+* [33m2b4afc9[m continue to build all sumbol testing
+* [33m47eb1ed[m initial converting to all stocks testing
+[31m|[m * [33mec32f79[m[33m ([m[1;31morigin/NewArthur[m[33m, [m[1;32mNewArthur[m[33m)[m A pretty good model
+[31m|[m * [33ma3cca08[m check
+[31m|[m * [33m44b0831[m Adding sum functionality
+[31m|[m * [33md6449ac[m Using __call__ function for inference
+[31m|[m * [33mde997db[m Changed do_algo to use talib
+[31m|[m * [33m0eb1c00[m Model Update
+[31m|[m[31m/[m  
+* [33mcea6453[m testing-suite v1.0
+* [33me6b6117[m latest dump
+* [33m16a44c5[m resp typo fix
+* [33mfed1812[m getting ready to change raw-output to secdata
+* [33m7ac955e[m got tensorflow to play nice with algo-playground
+*   [33ma0127e7[m Merge branch 'Arthur's'
+[33m|[m[34m\[m  
+* [34m|[m [33mbffb078[m changes to algo playground
+* [34m|[m [33m9daf46f[m minor changes to testing suite and sorted out all logistical files
+* [34m|[m [33mb2973be[m testing sutie options
+* [34m|[m [33mef51205[m rename raw output files to new date format
+[34m|[m [34m|[m * [33m1c12029[m[33m ([m[1;31morigin/Arthur's[m[33m, [m[1;32mArthur's[m[33m)[m getting rid of other models
+[34m|[m [34m|[m * [33m46d90da[m updating to master
+[34m|[m [34m|[m * [33m820d4a1[m getting from master
+[34m|[m [34m|[m * [33m2c92f36[m Updating Models
+[34m|[m [34m|[m * [33m7d1f47b[m  Updated models again
+[34m|[m [34m|[m * [33m861f00e[m   Updated the Models
+[34m|[m [34m|[m * [33m2b63a3a[m  Switched to using __call__
+[34m|[m [34m|[m[34m/[m  
+[34m|[m * [33m6f3fa17[m Files that encode models are added.
+[34m|[m * [33mff6f6d6[m Adding neural network file
+[34m|[m[34m/[m  
+* [33m2c8dbf7[m raw-outputs
+* [33m368963b[m raw outputs, venv, and matplotlib
+* [33m89467d7[m initial commit
+* [33m0f46581[m Initial commit
