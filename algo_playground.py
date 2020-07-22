@@ -132,6 +132,7 @@ class Playground:
         if self.qty_stocks != 0:
             self.sell(self.arr_ys[self.time_total-1], self.time_total-1)
 
+
     # Get a List of tuples that have complete transaction data 
     # [(buy price, i , sell price, j)]
     def get_transactions(self):
