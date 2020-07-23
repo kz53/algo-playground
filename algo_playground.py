@@ -84,7 +84,7 @@ class Playground:
             lows.append(min(minute))
             closes.append(minute[-1])
         nn_result = nn_model.get_pred(np.array(highs), np.array(lows), np.array(closes))
-        return nn_result[0][0]
+        return nn_result[0][0] and ta.LINEARREG_SLOPE(data[-5:],5)[-1] > 0
 
     def cross_entry(self, i, t=15):
         points = self.arr_ys[i-(t+2):i+1]
@@ -99,6 +99,7 @@ class Playground:
 
     # Main loop starts here
     def main_loop(self):
+        counter = 0 
         # Start at 15 minutes
         for i in range(900, self.time_total):
             # Every 60 seconds
@@ -123,12 +124,16 @@ class Playground:
                     raise Exception("You can't have something either than 1 or 0 stocks")
             # Every second
             else:
+
                 # If x second ma is less than entry
-                if ta.MA(self.arr_ys[i-9:i+1],30)[-1] < self.entry and self.qty_stocks != 0:
+                if ta.MA(self.arr_ys[i-15:i],15)[-1] < self.entry - .10 and self.qty_stocks != 0:
                     self.sell(self.arr_ys[i], i)
+                    counter = 0 
                 # If price rises by x amount
-                if self.arr_ys[i] >= self.entry + 1.20 and self.qty_stocks != 0: 
+                if self.arr_ys[i] >= self.entry + .20 and self.qty_stocks != 0: 
                     self.sell(self.arr_ys[i], i)
+                    counter = 0 
+            counter += 1
         if self.qty_stocks != 0:
             self.sell(self.arr_ys[self.time_total-1], self.time_total-1)
 
@@ -154,6 +159,21 @@ class Playground:
         plt.plot(self.buy_xs, self.buy_ys, 'g^') 
         plt.show()
 
+    # Get list of transaction tuples where price did increase by at least x in next 60 seconds
+    def get_model_correct_preds(self):
+        correct_preds = []
+        for t in self.transactions: 
+            x = t[1]
+            y = t[0]
+            rose20 = False
+            for i in range(x,x+59):
+                if  i < 23000 and self.arr_ys[i] >= y+.10:
+                    rose20 = True
+                    break
+            if rose20:
+                correct_preds.append(t)
+        return correct_preds
+            
     #return 
     def get_results(self):
         #tODO: return result dict here instead of testing suite
@@ -165,6 +185,7 @@ class Playground:
         output['profit'] = self.profit 
         output['transactions'] = self.transactions
         output['num_transactions'] = len(self.transactions)
+        output['num_correct_preds'] = len(self.get_model_correct_preds())
         return output 
 
         return self.profit

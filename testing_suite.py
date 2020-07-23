@@ -53,6 +53,7 @@ for filename in files:
     results.append(output)
     print(output['date'])
     print("Num Transactions: ", str(output['num_transactions']))
+    print("Num correct preds: ", str(output['num_correct_preds']))
     #----------------
     # Get % of transactions that win
     num_win = 0
