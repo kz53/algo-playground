@@ -17,6 +17,7 @@ class Playground:
         self.time_start = 0
         #models
         self.entry = 0
+        self.exit = 0
         self.profit = 0
         self.buys = [] 
         self.exits = [] 
@@ -24,6 +25,10 @@ class Playground:
         self.buy_xs = []
         self.sell_ys = []
         self.sell_xs = []
+        self.pos_xs = []
+        self.pos_ys = []
+        self.neg_xs = []
+        self.neg_ys = []
         self.saved_exits = []
         self.transactions = [] 
         self.arr_xs = np.arange(self.time_total)
@@ -60,6 +65,7 @@ class Playground:
             raise Exception("Tried to buy when still have an open position.")
         self.profit += self.sell_ys[-1] - self.buy_ys[-1]
         self.qty_stocks -= 1
+        self.exit = price
 
     def get_valid_len(self, mylist):
         counter = 0
@@ -84,7 +90,8 @@ class Playground:
             lows.append(min(minute))
             closes.append(minute[-1])
         nn_result = nn_model.get_pred(np.array(highs), np.array(lows), np.array(closes))
-        return nn_result[0][0] and ta.LINEARREG_SLOPE(data[-5:],5)[-1] > 0
+        # return nn_result[0][0]
+        return nn_result[0][0] and ta.LINEARREG_SLOPE(data[-120:],120)[-1] > 0
 
     def cross_entry(self, i, t=15):
         points = self.arr_ys[i-(t+2):i+1]
@@ -100,40 +107,70 @@ class Playground:
     # Main loop starts here
     def main_loop(self):
         counter = 0 
+        direction_up = self.do_algo(self.arr_ys[0:900])
+        #-------------------------
+        # color points
+        prev_color = {'isGreen': False, 'price': 0}
+
+        if direction_up:
+            prev_color['isGreen'] = True
+        else:
+            prev_color['isGreen'] = False
+
+        prev_color['price'] = self.arr_ys[900]
+        print(prev_color)
+        #-------------------------
+        printed = False
         # Start at 15 minutes
         for i in range(900, self.time_total):
             # Every 60 seconds
-            if i % 10 == 0:
+            if i % 15 == 0:
+                
                 direction_up = self.do_algo(self.arr_ys[i-900:i])
+                if prev_color['isGreen']:
+                    if not printed:
+                        printed = True
+                        print(i)
+                        print(prev_color)
                 # If no stocks 
                 if self.qty_stocks == 0:
                     # If direction is going up
-                    if direction_up: 
+                    if direction_up and prev_color['isGreen'] == True and self.arr_ys[i] > prev_color['price'] and self.arr_ys[i] > self.get_ma(i,30): 
                         self.buy(self.arr_ys[i], i)
                     else:
                         #HOLD
                         pass
+                # If stocks 
                 elif self.qty_stocks == 1:
-                    if direction_up: 
+                    if not direction_up and not prev_color['isGreen'] and self.arr_ys[i] < prev_color['price']: 
+                        self.sell(self.arr_ys[i], i)       
+                    else:
                         #HOLD 
                         pass
-                    else:
-                        self.sell(self.arr_ys[i], i)
                 # Error with logging buys/sells
                 else:
                     raise Exception("You can't have something either than 1 or 0 stocks")
-            # Every second
+                #-------------------------
+                # color points
+                if direction_up:
+                    prev_color['isGreen'] = True
+                    self.pos_xs.append(i)
+                    self.pos_ys.append(self.arr_ys[i])
+                else:
+                    prev_color['isGreen'] = False
+                    self.neg_xs.append(i)
+                    self.neg_ys.append(self.arr_ys[i])
+                prev_color['price'] = self.arr_ys[i]
+                #-------------------------
+            # Every second    
             else:
-
-                # If x second ma is less than entry
-                if ta.MA(self.arr_ys[i-15:i],15)[-1] < self.entry - .10 and self.qty_stocks != 0:
-                    self.sell(self.arr_ys[i], i)
-                    counter = 0 
-                # If price rises by x amount
-                if self.arr_ys[i] >= self.entry + .20 and self.qty_stocks != 0: 
-                    self.sell(self.arr_ys[i], i)
-                    counter = 0 
+                pass
+                # if self.arr_ys[i] < self.get_ma(i,30) and self.qty_stocks != 0:
+                #     self.sell(self.arr_ys[i], i)  
             counter += 1
+
+
+        # Close out positions at the end of the day
         if self.qty_stocks != 0:
             self.sell(self.arr_ys[self.time_total-1], self.time_total-1)
 
@@ -145,6 +182,15 @@ class Playground:
         # print("Transactions: ", str(self.transactions)) 
         return self.transactions
 
+    def get_ma(self, i , t):
+        return ta.MA(self.arr_ys[i-t:i], t)[-1]
+
+
+    def plot_ma(self):
+        ma_xs = self.arr_xs[900:]
+        ma_ys = ta.MA(self.arr_ys, 30)[-22100:]
+        plt.plot(ma_xs, ma_ys, 'y.')
+
     def show_plot(self):
         for t in self.transactions: 
             gain = t[2] - t[0]
@@ -155,8 +201,11 @@ class Playground:
             self.sell_ys.append(t[2])
         plt.plot(self.arr_xs, self.arr_ys)
         plt.plot(self.arr_xs, self.arr_ys, 'b.')
-        plt.plot(self.sell_xs, self.sell_ys, 'ro')
-        plt.plot(self.buy_xs, self.buy_ys, 'g^') 
+        plt.plot(self.neg_xs, self.neg_ys, 'ro')
+        plt.plot(self.pos_xs, self.pos_ys, 'g^') 
+        # self.plot_ma()
+        plt.plot(self.buy_xs, self.buy_ys, 'c^')
+        plt.plot(self.sell_xs, self.sell_ys, 'mo') 
         plt.show()
 
     # Get list of transaction tuples where price did increase by at least x in next 60 seconds

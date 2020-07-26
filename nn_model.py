@@ -28,3 +28,4 @@ def get_pred(high,low,close):
     #print(val1,val2)
 
     return (val1>.5)
+    # return val1

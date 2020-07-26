@@ -24,6 +24,12 @@ class Playground:
         self.buy_xs = []
         self.sell_ys = []
         self.sell_xs = []
+        self.pos_xs = []
+        self.pos_ys = []
+        self.neg_xs = []
+        self.neg_ys = []
+        self.goodentry_xs = []
+        self.goodentry_ys = []
         self.saved_exits = []
         self.transactions = [] 
         self.arr_xs = np.arange(self.time_total)
@@ -84,7 +90,9 @@ class Playground:
             lows.append(min(minute))
             closes.append(minute[-1])
         nn_result = nn_model.get_pred(np.array(highs), np.array(lows), np.array(closes))
-        return nn_result[0][0] and ta.LINEARREG_SLOPE(data[-5:],5)[-1] > 0
+        # return nn_result[0][0]
+        # return nn_result[0][0] >= .45 and ta.LINEARREG_SLOPE(data[-120:],120)[-1] > 0
+        return nn_result[0][0] and ta.LINEARREG_SLOPE(data[-120:],120)[-1] > 0 
 
     def cross_entry(self, i, t=15):
         points = self.arr_ys[i-(t+2):i+1]
@@ -103,39 +111,22 @@ class Playground:
         # Start at 15 minutes
         for i in range(900, self.time_total):
             # Every 60 seconds
-            if i % 10 == 0:
+            if i % 5 == 0:
                 direction_up = self.do_algo(self.arr_ys[i-900:i])
-                # If no stocks 
-                if self.qty_stocks == 0:
-                    # If direction is going up
-                    if direction_up: 
-                        self.buy(self.arr_ys[i], i)
-                    else:
-                        #HOLD
-                        pass
-                elif self.qty_stocks == 1:
-                    if direction_up: 
-                        #HOLD 
-                        pass
-                    else:
-                        self.sell(self.arr_ys[i], i)
-                # Error with logging buys/sells
+                if direction_up:
+                    self.pos_xs.append(i)
+                    self.pos_ys.append(self.arr_ys[i])
+                    if ta.LINEARREG_SLOPE(self.arr_ys[i-5:i],5)[-1] > 0 :
+                        self.goodentry_xs.append(i)
+                        self.goodentry_ys.append(self.arr_ys[i])
                 else:
-                    raise Exception("You can't have something either than 1 or 0 stocks")
-            # Every second
+                    self.neg_xs.append(i)
+                    self.neg_ys.append(self.arr_ys[i])
+                
             else:
-
-                # If x second ma is less than entry
-                if ta.MA(self.arr_ys[i-15:i],15)[-1] < self.entry - .10 and self.qty_stocks != 0:
-                    self.sell(self.arr_ys[i], i)
-                    counter = 0 
-                # If price rises by x amount
-                if self.arr_ys[i] >= self.entry + .20 and self.qty_stocks != 0: 
-                    self.sell(self.arr_ys[i], i)
-                    counter = 0 
+                pass
             counter += 1
-        if self.qty_stocks != 0:
-            self.sell(self.arr_ys[self.time_total-1], self.time_total-1)
+
 
 
     # Get a List of tuples that have complete transaction data 
@@ -155,8 +146,9 @@ class Playground:
             self.sell_ys.append(t[2])
         plt.plot(self.arr_xs, self.arr_ys)
         plt.plot(self.arr_xs, self.arr_ys, 'b.')
-        plt.plot(self.sell_xs, self.sell_ys, 'ro')
-        plt.plot(self.buy_xs, self.buy_ys, 'g^') 
+        plt.plot(self.neg_xs, self.neg_ys, 'ro')
+        plt.plot(self.pos_xs, self.pos_ys, 'g^') 
+        plt.plot(self.goodentry_xs, self.goodentry_ys, 'c^') 
         plt.show()
 
     # Get list of transaction tuples where price did increase by at least x in next 60 seconds
