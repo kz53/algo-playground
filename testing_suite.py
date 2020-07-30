@@ -1,76 +1,90 @@
-import os
-import algo_playground as ap
+import os 
+import algo_playground3 as ap
 import argparse
-import numpy as np
-# grab args
-# -f (file), -a (all), none (default_files)
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "--file", help = "")
-parser.add_argument('-a', '--all', action='store_true')
-args = parser.parse_args()
 
-#config
-files = ["MSFT-2020-03-24-secdata.txt"]
-folder = 'MSFT/'
+
+# If no file argument given, default to below symb and day
+symb = 'SHOP'
+folder = symb + '/'
+directory = '../secdata/'
+files = [f"{symb}-2020-07-13-secdata.txt"]
+excluded_files = [f'{symb}-2020-07-10-secdata.txt',f'{symb}-2020-07-16-secdata.txt']
 
 #models
 results = []
-lines= []
+lines= [] # --delete
 
-m = ap.Playground()
+# Grab arguments
+# -f (file), -a (all), none (default_files), -s (symbol)
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", "--file", help = "")
+parser.add_argument('-a', '--all', action='store_true')
+parser.add_argument('-s', '--symb' )
+parser.add_argument('-p', '--plot', action='store_true' )
+parser.add_argument('-d', '--date' )
 
+args = parser.parse_args()  
+
+if args.symb:
+    symb = args.symb
+    folder = symb + '/'
+    files = [f'{symb}-2020-03-24-secdata.txt']
+    excluded_files = [f'{symb}-2020-07-10-secdata.txt']
+
+# Handle args
 if args.all:
-    files = os.listdir('./secdata/'+folder)
+    files = os.listdir(directory+folder)
+    for x in excluded_files:
+        files.remove(x)
 elif args.file:
     files = []
     files.append(args.file)
 else:
     pass
 
+# Loop thorugh files
 for filename in files:
-    f = open('./secdata/'+folder+filename, 'r')
-    data  = []
-    counter = 0
-    end_time = len(f.readlines())
+    pg = ap.Playground(directory+folder+filename)
+    # Run mainloop on file and get output
+    pg.main_loop()
+    transactions = pg.get_transactions()
+    output = pg.get_results()
+    profit = pg.get_results()
+    results.append(output)
+    print(output['date'])
+    # print("Transactions: ", str(output[ 'transactions']))
+    print("Num Transactions: ", str(output['num_transactions']))
+    print("Num correct preds: ", str(output['num_correct_preds']))
+    #----------------
+    # Get % of transactions that win
+    num_win = 0
+    for t in output['transactions']: 
+        if t[2]-t[0] > 0:
+            num_win += 1
+    if output['num_transactions'] > 0:
+        print("Pct win: " + str(num_win/output['num_transactions']))
+    else:
+        print(0)
+    #----------------
+    print("Profit: ", str(output['profit']))
+    print("----------------")
 
-    for i in f.readlines():
-        if(float(i)!=-1):
-            data.append(float(i))
-        else:
-            end_time = counter
-            break
-        counter+=1
+    if args.plot :
+        pg.show_plot()
 
-    # run mainloop on file
-    # print(filename[0:10])
-    m.load_data(folder+filename)
-    m.main_loop()
-    transactions = m.get_transactions()
-    profit = m.get_results()
-    output = {}
-    output['date'] = filename[5:15]
-    output['total_time'] = end_time
-    output['profit'] = profit
-    # output['transactions'] = transactions
-    results.append(profit)
+# Get total return across X days
+total_sum = 0
+for r in results:
+    total_sum += r['profit']
+print(f"Total profit across {len(results)} days: {total_sum}")
 
-print(np.sum(np.array(results)))
+#------------------------------
+# Code Library
 
-# trans_list = m.get_transactions()
-# for item in trans_list:
-#     subprofit = item[2] - item[0]
-#     if subprofit < 0:
-#         print(str(item) + ", " + str(subprofit))
+# #Get % of transactions that win
+# num_win = 0
+# for t in output['transactions']: 
+#     if t[2]-t[0] > 0:
+#         num_win += 1
+# print("Pct win: " + str(num_win/output['num_transactions']))
 
-
-# m.show_plot()
-
-
-#{
-# Date:
-# Output:
-# Length of time:
-# Transactions: (price, i, price2, j)
-#
-#
-#}

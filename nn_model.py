@@ -10,14 +10,13 @@ def init():
     model2=tf.keras.models.load_model("models/model2")
 
 def transform(high,low,close):
-    new=np.zeros(7)
+    new=np.zeros(6)
     new[0]=ta.NATR(high,low,close)[-1]
     new[1]=ta.CMO(close)[-1]
     new[2]=ta.PLUS_DI(high,low,close)[-1]-ta.MINUS_DI(high,low,close)[-1]
     new[3]=ta.MOM(close,timeperiod=14)[-1]
     new[4]=ta.PLUS_DM(high,low)[-1]-ta.MINUS_DM(high,low)[-1]
     new[5]=ta.RSI(close)[-1]
-    new[6]=ta.RSI(close,timeperiod=5)[-1]
     #new[8]=ta.WILLR(high,low,close)[-1]
     #new[9]=ta.ROC(close,timeperiod=14)[-1]*100
     return new
@@ -33,7 +32,7 @@ def get_pred(high,low,close):
     return (val1>.5)
 
 def batch_pred(high,low,close):
-    batch=np.zeros((0,7))
+    batch=np.zeros((0,6))
     for i in range(900,len(close)):
         highmins = high[np.arange(i-900,i,60)]
         lowmins = low[np.arange(i-900,i,60)]

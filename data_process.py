@@ -16,7 +16,7 @@ for dirname in os.listdir("raw-outputs"):
                     low=np.zeros(15)
                     close=np.zeros(15)
                     cat=np.zeros(26)
-                    new=np.zeros((26,10))
+                    new=np.zeros((26,6))
                     for row in reader:
                         try:
                             high[count]=float(row['marketHigh'])
@@ -24,20 +24,16 @@ for dirname in os.listdir("raw-outputs"):
                             close[count]=float(row['marketClose'])
                         except ValueError:
                             continue
-                        if(count==0 and row_count>0 and high[count]>=last_close*1.0003):
+                        if(count==0 and row_count>0 and high[count]>=last_close*1.001):
                             cat[row_count-1]=1
                         count+=1
                         if count>=15:
                             new[row_count,0]=ta.NATR(high,low,close)[-1]
-                            new[row_count,1]=ta.CCI(high,low,close)[-1]
-                            new[row_count,2]=ta.CMO(close)[-1]
-                            new[row_count,3]=ta.CORREL(high,low, timeperiod=14)[-1]*100
-                            new[row_count,4]=ta.PLUS_DI(high,low,close)[-1]-ta.MINUS_DI(high,low,close)[-1]
-                            new[row_count,5]=ta.MOM(close,timeperiod=14)[-1]
-                            new[row_count,6]=ta.PLUS_DM(high,low)[-1]-ta.MINUS_DM(high,low)[-1]
-                            new[row_count,7]=ta.RSI(close)[-1]
-                            new[row_count,8]=ta.WILLR(high,low,close)[-1]
-                            new[row_count,9]=ta.ROC(close,timeperiod=14)[-1]*100
+                            new[row_count,1]=ta.CMO(close)[-1]
+                            new[row_count,2]=ta.PLUS_DI(high,low,close)[-1]-ta.MINUS_DI(high,low,close)[-1]
+                            new[row_count,3]=ta.MOM(close,timeperiod=14)[-1]
+                            new[row_count,4]=ta.PLUS_DM(high,low)[-1]-ta.MINUS_DM(high,low)[-1]
+                            new[row_count,5]=ta.RSI(close)[-1]
                             count=0
                             last_close=close[-1]
                             high=np.zeros(15)

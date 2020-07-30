@@ -5,7 +5,7 @@ import os
 
 rng = np.random.default_rng()
 
-raw=np.array([]).reshape((0,9))
+raw=np.array([]).reshape((0,7))
 np.set_printoptions(suppress=True, precision=3)
 for filename in os.listdir("learning-data/MSFT"):
     arr=np.load('./learning-data/MSFT/'+filename)
@@ -14,8 +14,7 @@ for filename in os.listdir("learning-data/MSFT"):
 
 uniques=unique_rows = np.unique(raw, axis=0)
 rng.shuffle(uniques,axis=0)
-#labeled=uniques
-labeled=np.delete(uniques,(7),1)
+labeled=uniques
 
 
 data=labeled[:,:-1]/100
