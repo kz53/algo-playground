@@ -41,10 +41,10 @@ class Playground:
         nn_model.init()
 
         highs= ta.MAX(self.arr_ys,timeperiod=60)
-        lows = taMIN(self.arr_ys,timeperiod=60)
+        lows = ta.MIN(self.arr_ys,timeperiod=60)
         closes = self.arr_ys
 
-        self.batch_preds=nn_model.batch_pred(highs,lows,closes)
+        self.batch_preds_up,self.batch_preds_down=nn_model.batch_pred(highs,lows,closes)
 
     def buy(self, price, i):
         self.entry = price
@@ -112,43 +112,38 @@ class Playground:
 
     # Main loop starts here
     def main_loop(self):
-        counter = 0
-        direction_up = self.do_algo(self.arr_ys[0:900])
-        #-------------------------
-        # color points
-        prev_color = {'isGreen': False, 'price': 0}
-
-        if direction_up:
-            prev_color['isGreen'] = True
-        else:
-            prev_color['isGreen'] = False
-
-        prev_color['price'] = self.arr_ys[900]
-        print(prev_color)
-        #-------------------------
-        printed = False
+        # counter = 0
+        # direction_up = self.do_algo(self.arr_ys[0:900])
+        # #-------------------------
+        # # color points
+        # prev_color = {'isGreen': False, 'price': 0}
+        #
+        # if direction_up:
+        #     prev_color['isGreen'] = True
+        # else:
+        #     prev_color['isGreen'] = False
+        #
+        # prev_color['price'] = self.arr_ys[900]
+        # print(prev_color)
+        # #-------------------------
+        #printed = False
         # Start at 15 minutes
         for i in range(900, self.time_total):
             # Every 60 seconds
-            if i % 15 == 0:
-
-                direction_up = self.batch_preds[i-900]
-                if prev_color['isGreen']:
-                    if not printed:
-                        printed = True
-                        print(i)
-                        print(prev_color)
+            if True:
+                direction_up = self.batch_preds_up[i-900]>.5
+                direction_down = self.batch_preds_down[i-900]>.5
                 # If no stocks
                 if self.qty_stocks == 0:
                     # If direction is going up
-                    if direction_up and prev_color['isGreen'] == True and self.arr_ys[i] > prev_color['price'] and self.arr_ys[i] > self.get_ma(i,30):
+                    if direction_up and not direction_down and ta.LINEARREG_SLOPE(self.arr_ys[i-900:i],900)[-1] > 0:
                         self.buy(self.arr_ys[i], i)
                     else:
                         #HOLD
                         pass
                 # If stocks
                 elif self.qty_stocks == 1:
-                    if not direction_up and not prev_color['isGreen'] and self.arr_ys[i] < prev_color['price']:
+                    if (direction_down):
                         self.sell(self.arr_ys[i], i)
                     else:
                         #HOLD
@@ -156,24 +151,10 @@ class Playground:
                 # Error with logging buys/sells
                 else:
                     raise Exception("You can't have something either than 1 or 0 stocks")
-                #-------------------------
-                # color points
-                if direction_up:
-                    prev_color['isGreen'] = True
-                    self.pos_xs.append(i)
-                    self.pos_ys.append(self.arr_ys[i])
-                else:
-                    prev_color['isGreen'] = False
-                    self.neg_xs.append(i)
-                    self.neg_ys.append(self.arr_ys[i])
-                prev_color['price'] = self.arr_ys[i]
-                #-------------------------
-            # Every second
             else:
                 pass
                 # if self.arr_ys[i] < self.get_ma(i,30) and self.qty_stocks != 0:
                 #     self.sell(self.arr_ys[i], i)
-            counter += 1
 
 
         # Close out positions at the end of the day
@@ -205,13 +186,19 @@ class Playground:
             self.buy_ys.append(t[0])
             self.sell_xs.append(t[3])
             self.sell_ys.append(t[2])
-        plt.plot(self.arr_xs, self.arr_ys)
-        plt.plot(self.arr_xs, self.arr_ys, 'b.')
-        plt.plot(self.neg_xs, self.neg_ys, 'ro')
-        plt.plot(self.pos_xs, self.pos_ys, 'g^')
+        fig, ax1=plt.subplots()
+
+        ax2=ax1.twinx()
+        color = 'tab:blue'
+        ax1.tick_params(axis='y', labelcolor=color)
+        ax1.plot(self.arr_xs[900:], self.batch_preds_up, 'g')
+        ax1.plot(self.arr_xs[900:],self.batch_preds_down,'r')
+        ax2.plot(self.arr_xs, self.arr_ys)
+        #plt.plot(self.arr_xs, self.arr_ys, 'b.')
         # self.plot_ma()
-        plt.plot(self.buy_xs, self.buy_ys, 'c^')
-        plt.plot(self.sell_xs, self.sell_ys, 'mo')
+        ax2.plot(self.buy_xs, self.buy_ys, 'c^')
+        ax2.plot(self.sell_xs, self.sell_ys, 'mo')
+
         plt.show()
 
     # Get list of transaction tuples where price did increase by at least x in next 60 seconds
